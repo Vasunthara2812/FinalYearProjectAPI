@@ -99,7 +99,7 @@ public class CourseController : ControllerBase
 
     // POST: api/course
     [HttpPost]
-    public IActionResult AddCourse([FromBody] Course course)
+    public IActionResult AddCourse([FromBody] Courses course)
     {
         using var con = new MySqlConnection(_connectionString);
         var cmd = new MySqlCommand(

@@ -13,7 +13,7 @@ public class SubtopicController : ControllerBase
     }
 
     // GET: api/subtopic/chapter/1
-    [HttpGet("chapter/{chapterId}")]
+    [HttpGet("{chapterId}")]
     public IActionResult GetSubtopicsByChapter(int chapterId)
     {
         var subtopics = new List<Subtopic>();

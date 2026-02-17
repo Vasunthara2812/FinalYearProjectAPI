@@ -12,8 +12,7 @@ public class ResultController : ControllerBase
         _connectionString = config.GetConnectionString("MySqlConnection");
     }
 
-    // GET: api/result/course/1
-    [HttpGet("course/{courseId}")]
+
     public IActionResult GetResultsByCourse(int courseId)
     {
         var results = new List<Result>();
@@ -37,14 +36,17 @@ public class ResultController : ControllerBase
                 CourseId = reader.GetInt32("course_id"),
                 ChapterId = reader.GetInt32("chapter_id"),
                 SubtopicId = reader.GetInt32("subtopic_id"),
-                ResultText = reader.GetString("result")
+                // 🔹 Null safe
+                ResultText = reader["result"] == DBNull.Value
+                    ? ""
+                    : reader.GetString("result")
             });
         }
 
         return Ok(results);
     }
 
-    // POST: api/result
+    // ✅ POST: api/result
     [HttpPost]
     public IActionResult AddResult([FromBody] Result result)
     {
