@@ -12,7 +12,7 @@ public class ResultController : ControllerBase
         _connectionString = config.GetConnectionString("MySqlConnection");
     }
 
-
+    [HttpGet("course/{courseId}")]
     public IActionResult GetResultsByCourse(int courseId)
     {
         var results = new List<Result>();
@@ -24,6 +24,39 @@ public class ResultController : ControllerBase
               WHERE course_id = @courseId", con);
 
         cmd.Parameters.AddWithValue("@courseId", courseId);
+
+        con.Open();
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            results.Add(new Result
+            {
+                ResultId = reader.GetInt32("result_id"),
+                CourseId = reader.GetInt32("course_id"),
+                ChapterId = reader.GetInt32("chapter_id"),
+                SubtopicId = reader.GetInt32("subtopic_id"),
+                // 🔹 Null safe
+                ResultText = reader["result"] == DBNull.Value
+                    ? ""
+                    : reader.GetString("result")
+            });
+        }
+
+        return Ok(results);
+    }
+    [HttpGet("{subtopicId}")]
+    public IActionResult GetResultsBySubtopic(int subtopicId)
+    {
+        var results = new List<Result>();
+
+        using var con = new MySqlConnection(_connectionString);
+        var cmd = new MySqlCommand(
+            @"SELECT result_id, course_id, chapter_id, subtopic_id, result 
+              FROM results 
+              WHERE subtopic_id = @subtopicId", con);
+
+        cmd.Parameters.AddWithValue("@subtopicId", subtopicId);
 
         con.Open();
         using var reader = cmd.ExecuteReader();

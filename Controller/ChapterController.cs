@@ -13,7 +13,7 @@ public class ChapterController : ControllerBase
     }
 
     // GET: api/chapter/{courseId} - get all chapters for a course
-    [HttpGet()]
+    [HttpGet("{courseId}")]
     public IActionResult GetChapters(int courseId)
     {
         var chapters = new List<Chapter>();
