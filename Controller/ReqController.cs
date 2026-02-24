@@ -24,7 +24,7 @@ namespace FinalYearProjectAPI.Controller
 
         // GET: api/req
         [HttpGet]
-        public async Task<IActionResult> GetAllRequirements()
+        public async Task<IActionResult> GetAllRequirements(int userId)
         {
             var requirements = new List<RequirementDto>();
 
@@ -45,9 +45,12 @@ namespace FinalYearProjectAPI.Controller
                 FROM requirements r
                 LEFT JOIN generated_courses_json g 
                     ON r.RequirementId = g.requirement_id
+                WHERE r.UserId = @UserId
                 ORDER BY r.RequirementId DESC";
 
-            using var cmd    = new MySqlCommand(sql, conn);
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@UserId", userId);
+
             using var reader = await cmd.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
